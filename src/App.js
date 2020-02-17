@@ -1,27 +1,27 @@
 var contentNode = document.getElementById('contents');
 
-const products = [
-    {
-        id : '1',
-        name : 'blue shirt',
-        price : '17',
-        category : 'shirts',
-        image : 'view'
-    }
-];
-
-
 
 class ProductRow extends React.Component{
-    render() {return(
+    constructor(props) {
+        super(props);
+        this.handleOnClick = this.handleOnClick.bind(this);
+    }
+
+    handleOnClick(url) {
+        window.open(url, '_blank');
+    }
+    render() {
+        const linkStyle = { textDecoration: "underline", color: "blue"};
+        return(
             <tr>
                 <td>{this.props.product.name}</td>
-                <td>{this.props.product.price}</td>
+                <td>${this.props.product.price}</td>
                 <td>{this.props.product.category}</td>
-                <td><a href="#" onclick="window.open({this.props.product.image}); return false;" >View</a> </td>
+                <td><div style={linkStyle}  onClick={() => {this.handleOnClick(this.props.product.image)}}> View </div>         </td>
             </tr>
     )};
 }
+
 
 class ProductTable extends React.Component{
     constructor(props) {
@@ -57,14 +57,15 @@ class ProductAdd extends React.Component{
         var form = document.forms.addProduct;
         this.props.createProduct({
             name : form.name.value,
-            price : form.price.value,
+            price : form.price.value.slice(1),
             category : form.category.value,
             image : form.image.value,
 
         });
         form.name.value = "";
-        form.price.value="";
+        console.log(form.price.defaultValue);
         form.category.value="";
+        form.price.value = form.price.defaultValue; 
         form.image.value="";
     }
 
@@ -73,32 +74,34 @@ class ProductAdd extends React.Component{
             <div>
                 <form name="addProduct" onSubmit={this.handleSubmit}>
                     <table className="form-table">
-                        <tr>
-                            <td>
-                                Name<br/>
-                                <input type="text" name="name" placeholder="Name"/>
-                            </td>
-                            <td>
-                                Price<br/>
-                                <input type="text" name="price" placeholder="Price"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Category <br/>
-                                <select name="category"> 
-                                    <option value="shirts">Shirts</option>
-                                    <option value="jeans">Jeans</option>
-                                    <option value="jackets">Jackets</option>
-                                    <option value="sweaters">Sweaters</option>
-                                    <option value="accessories">Accessories</option>
-                                </select>
-                            </td>
-                            <td>
-                                Image URL<br/>
-                                <input type="text" name="image" placeholder="Image"/>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Name<br/>
+                                    <input type="text" name="name" placeholder="Name"/>
+                                </td>
+                                <td>
+                                    Price<br/>
+                                    <input type="text" name="price" defaultValue="$"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Category <br/>
+                                    <select name="category"> 
+                                        <option value="shirts">Shirts</option>
+                                        <option value="jeans">Jeans</option>
+                                        <option value="jackets">Jackets</option>
+                                        <option value="sweaters">Sweaters</option>
+                                        <option value="accessories">Accessories</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    Image URL<br/>
+                                    <input type="text" name="image" placeholder="Image"/>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                     <button>Add Product</button>
                 </form>
@@ -111,7 +114,7 @@ class ProductAdd extends React.Component{
 class ProductList extends React.Component{
     constructor() {
         super();
-        this.state = {products : products};
+        this.state = {products : []};
         this.createProduct = this.createProduct.bind(this);
     }
 

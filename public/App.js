@@ -1,15 +1,16 @@
 var contentNode = document.getElementById('contents');
 
-const products = [{
-    id: '1',
-    name: 'blue shirt',
-    price: '17',
-    category: 'shirts',
-    image: 'view'
-}];
-
 class ProductRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleOnClick = this.handleOnClick.bind(this);
+    }
+
+    handleOnClick(url) {
+        window.open(url, '_blank');
+    }
     render() {
+        const linkStyle = { textDecoration: "underline", color: "blue" };
         return React.createElement(
             'tr',
             null,
@@ -21,6 +22,7 @@ class ProductRow extends React.Component {
             React.createElement(
                 'td',
                 null,
+                '$',
                 this.props.product.price
             ),
             React.createElement(
@@ -32,11 +34,13 @@ class ProductRow extends React.Component {
                 'td',
                 null,
                 React.createElement(
-                    'a',
-                    { href: '#', onclick: 'window.open({this.props.product.image}); return false;' },
-                    'View'
+                    'div',
+                    { style: linkStyle, onClick: () => {
+                            this.handleOnClick(this.props.product.image);
+                        } },
+                    ' View '
                 ),
-                ' '
+                '         '
             )
         );
     }
@@ -99,14 +103,15 @@ class ProductAdd extends React.Component {
         var form = document.forms.addProduct;
         this.props.createProduct({
             name: form.name.value,
-            price: form.price.value,
+            price: form.price.value.slice(1),
             category: form.category.value,
             image: form.image.value
 
         });
         form.name.value = "";
-        form.price.value = "";
+        console.log(form.price.defaultValue);
         form.category.value = "";
+        form.price.value = form.price.defaultValue;
         form.image.value = "";
     }
 
@@ -121,67 +126,71 @@ class ProductAdd extends React.Component {
                     'table',
                     { className: 'form-table' },
                     React.createElement(
-                        'tr',
+                        'tbody',
                         null,
                         React.createElement(
-                            'td',
+                            'tr',
                             null,
-                            'Name',
-                            React.createElement('br', null),
-                            React.createElement('input', { type: 'text', name: 'name', placeholder: 'Name' })
-                        ),
-                        React.createElement(
-                            'td',
-                            null,
-                            'Price',
-                            React.createElement('br', null),
-                            React.createElement('input', { type: 'text', name: 'price', placeholder: 'Price' })
-                        )
-                    ),
-                    React.createElement(
-                        'tr',
-                        null,
-                        React.createElement(
-                            'td',
-                            null,
-                            'Category ',
-                            React.createElement('br', null),
                             React.createElement(
-                                'select',
-                                { name: 'category' },
-                                React.createElement(
-                                    'option',
-                                    { value: 'shirts' },
-                                    'Shirts'
-                                ),
-                                React.createElement(
-                                    'option',
-                                    { value: 'jeans' },
-                                    'Jeans'
-                                ),
-                                React.createElement(
-                                    'option',
-                                    { value: 'jackets' },
-                                    'Jackets'
-                                ),
-                                React.createElement(
-                                    'option',
-                                    { value: 'sweaters' },
-                                    'Sweaters'
-                                ),
-                                React.createElement(
-                                    'option',
-                                    { value: 'accessories' },
-                                    'Accessories'
-                                )
+                                'td',
+                                null,
+                                'Name',
+                                React.createElement('br', null),
+                                React.createElement('input', { type: 'text', name: 'name', placeholder: 'Name' })
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                'Price',
+                                React.createElement('br', null),
+                                React.createElement('input', { type: 'text', name: 'price', defaultValue: '$' })
                             )
                         ),
                         React.createElement(
-                            'td',
+                            'tr',
                             null,
-                            'Image URL',
-                            React.createElement('br', null),
-                            React.createElement('input', { type: 'text', name: 'image', placeholder: 'Image' })
+                            React.createElement(
+                                'td',
+                                null,
+                                'Category ',
+                                React.createElement('br', null),
+                                React.createElement(
+                                    'select',
+                                    { name: 'category' },
+                                    React.createElement(
+                                        'option',
+                                        { value: 'shirts' },
+                                        'Shirts'
+                                    ),
+                                    React.createElement(
+                                        'option',
+                                        { value: 'jeans' },
+                                        'Jeans'
+                                    ),
+                                    React.createElement(
+                                        'option',
+                                        { value: 'jackets' },
+                                        'Jackets'
+                                    ),
+                                    React.createElement(
+                                        'option',
+                                        { value: 'sweaters' },
+                                        'Sweaters'
+                                    ),
+                                    React.createElement(
+                                        'option',
+                                        { value: 'accessories' },
+                                        'Accessories'
+                                    )
+                                )
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                'Image URL',
+                                React.createElement('br', null),
+                                React.createElement('input', { type: 'text', name: 'image', placeholder: 'Image' })
+                            )
                         )
                     )
                 ),
@@ -198,7 +207,7 @@ class ProductAdd extends React.Component {
 class ProductList extends React.Component {
     constructor() {
         super();
-        this.state = { products: products };
+        this.state = { products: [] };
         this.createProduct = this.createProduct.bind(this);
     }
 
